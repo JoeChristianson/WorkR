@@ -1,0 +1,27 @@
+{
+  "name": "workr",
+  "version": "1.0.0",
+  "description": "employee management system",
+  "main": "index.js",
+  "scripts": {
+    "test": "none"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoeChristianson/WorkR.git"
+  },
+  "keywords": [
+    "employee",
+    "management"
+  ],
+  "author": "Joe Christianson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JoeChristianson/WorkR/issues"
+  },
+  "homepage": "https://github.com/JoeChristianson/WorkR#readme",
+  "dependencies": {
+    "inquirer": "^8.2.2",
+    "mysql2": "^2.3.3"
+  }
+}
