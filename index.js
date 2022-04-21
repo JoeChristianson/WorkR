@@ -3,8 +3,13 @@ const questions = require("./modules/questions")
 const db = require("./modules/db")
 const mysql = require('mysql2');
 
-const viewAllDepartments = ()=>{
-    
+const viewAllDepartments = async ()=>{
+    db.query("SELECT * FROM departments",(error,results)=>{
+        if (error){
+            console.log(error)
+        }
+        else console.log(results)
+    });
 }
 
 
