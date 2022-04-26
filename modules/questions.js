@@ -13,5 +13,76 @@ const menu = [
         }
     ]
 
+const addADepartment = [
+    {
+        type:'input',
+        message:'Enter new department name.',
+        name:'departmentName'
+    }
+]
 
-module.exports = {menu};
+const addARole = (deps) =>{
+    return [
+        {
+            type:'list',
+            message:"Add role to which department?",
+            choices:deps,
+            name:'departmentName'
+        },
+        {
+            type:'input',
+            message:"What is the name of the role",
+            name:"roleName"
+        },
+        {
+            type:'input',
+            message:"What is the annual salary?",
+            name:"salary"
+        }
+    ]
+}
+
+const addAnEmployee = (roles,coworkers)=>{
+    return [
+        {type:'input',
+        message:'Enter employee first name.',
+        name:"firstName"
+        },
+        {
+            type:"input",
+            message:"Enter employee last name",
+            name:"lastName"
+        },
+        {
+            type:"list",
+            message:"Choose employee role",
+            name:"roleName",
+            choices:[...roles,"Add a New Role"]
+        },
+        {
+            type:'input',
+            message:"Who is their manager?",
+            name:["None",...coworkers]
+        }
+    ]
+}
+
+const updateEmployeeRole = (employees,roles)=>{
+    return [
+        {
+            type:"list",
+            message:"Which employee is getting a new role?",
+            name:"employee",
+            choices:employees
+        },
+        {
+            type:"list",
+            message:"What is their new role?",
+            name:"role",
+            choices:roles
+        }
+    ]
+}
+
+
+module.exports = {menu,addADepartment,addARole,addAnEmployee,updateEmployeeRole};
