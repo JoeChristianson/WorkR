@@ -130,15 +130,12 @@ const updateEmployeeRole = async ()=>{
         const employeeChoices = results.map(emp=>{
             return (`${emp.first_name} ${emp.last_name} - ${emp.job_title} (ID:${emp.employee_id})`)
         }).filter(emp=>!emp.includes("null null -"));
-        console.log(employeeChoices);
         const roleChoices = [...new Set(results.map(role=>{
             return (role.job_title)
         }))]
-        console.log(roleChoices)
         const answers = await inquirer.prompt(questions.updateEmployeeRole(employeeChoices,roleChoices));
         let employeeID = answers.employee.substring(answers.employee.indexOf(':') + 1).slice(0,-1);
         const roleId = results.filter(result =>{return answers.role == result.job_title})[0].role_id;
-        console.log(employeeID, roleId)
         db.query(`UPDATE employees SET role_id=${roleId} WHERE employee_id = ${employeeID};`,(err,results)=>{
             console.log("role updated.")
         })
@@ -151,7 +148,6 @@ const updateEmployeeRole = async ()=>{
 
 const mainMenu = async ()=>{
     const answer = await inquirer.prompt(questions.menu);
-    console.log(answer)
     switch (answer.action){
         case "View All Departments":
             viewAllDepartments();
