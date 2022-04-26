@@ -60,9 +60,10 @@ const addAnEmployee = (roles,coworkers)=>{
             choices:[...roles,"Add a New Role"]
         },
         {
-            type:'input',
+            type:'list',
             message:"Who is their manager?",
-            name:["None",...coworkers]
+            name:"manager",
+            choices:["None",...coworkers]
         }
     ]
 }

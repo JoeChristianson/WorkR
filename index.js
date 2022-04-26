@@ -78,58 +78,50 @@ const addARole = async (isMiddle)=>{
         return value})
 }
 
-const addAnEmployee = ()=>{
-    let coworkerLib;
-    db.query("Select * from roles",async (error,roleLib)=> {
-        if(error){
+
+const addAnEmployee = async ()=>{
+    let roleLib;
+    db.query("SELECT * FROM roles",async (error,results)=>{
+        if (error){
             console.log(error)
         }
         else {
-            const roles = roleLib.map(role=>{return role.job_title});
-            console.log(roles)
-            const answers = await inquirer.prompt(questions.addAnEmployee(roles,[]).slice(0,-1));
-            let {firstName,lastName,roleName} = answers;
-            if (roleName==="Add a New Role"){
-                const newRoleAns = await addARole(true);
-                console.log(roleName)
-                roleName = newRoleAns?.roleName ;
-                console.log(`You have added ${roleName} as a job title.`)
-            }
-            db.query(`SELECT department_id FROM roles WHERE job_title=${roleName}`,(error,results)=>{
-                console.log(results)
+            roleLib = results;
+            const choices = results.map((role)=>{
+                return role.job_title;
             })
-            // db.query("SELECT employee_id FROM employees LEFT JOIN roles ON employee.role_id=roles.role_id LEFT JOIN departments")
+            const answers = await inquirer.prompt(questions.addAnEmployee(choices,[]).slice(0,-1));
+            answers.roleId = roleLib.filter(role=>{
+                return role.job_title == answers.roleName;
+            })[0].role_id;
+            answers.departmentId = roleLib.filter(role=>{
+                return role.job_title === answers.roleName;
+            })[0].department_id;
+            console.log(answers.departmentId)
+            console.log(answers.roleId);
+            db.query(`SELECT * FROM employees JOIN roles ON employees.role_id=roles.role_id WHERE roles.department_id = ${answers.departmentId};`, async (error,results)=>{
+                if (error){
+                    console.log(error)
+                }
+                const coworkers = results.map(row=>{
+                    return `${row.first_name} ${row.last_name} - ${row.job_title} (ID:${row.employee_id})`
+                })
+                const mAnswers = await inquirer.prompt([questions.addAnEmployee([],coworkers)[3]]);
+                const managerUnparsed = mAnswers.manager;
+                console.log(managerUnparsed)
+                let managerId = managerUnparsed.slice(managerUnparsed.indexOf(":")+1,managerUnparsed.indexOf(")"))
+                managerId = parseInt(managerId)|| null;
+                
+                db.query(`INSERT INTO employees (first_name,last_name,role_id,manager_id) VALUES ('${answers.firstName}','${answers.lastName}',${answers.roleId},${managerId})`,(error,results)=>{
+                    if (error){
+                        console.log(error)
+                    }
+                    else mainMenu();
+                })
+            })            
         }
-    })
+    });
 }
-
-
-
-// const addAnEmployee = async ()=>{
-//     let roleLib;
-//     db.query("SELECT * FROM roles",async (error,results)=>{
-//         if (error){
-//             console.log(error)
-//         }
-//         else {
-//             roleLib = results;
-//             const choices = results.map((role)=>{
-//                 return role.job_title;
-//             })
-//             const answers = await inquirer.prompt(questions.addAnEmployee(choices,[]));
-//             answers.roleId = roleLib.filter(role=>{
-//                 return role.job_title == answers.roleName;
-//             })[0].role_id;
-//             console.log(answers.roleId);
-//             db.query(`INSERT INTO employees(first_name,last_name,role_id,manager_id) VALUES ("${answers.firstName}","${answers.lastName}", ${answers.roleId},${answers.managerId});`,(error,results)=>{
-//                 if (error){
-//                     console.log(error);
-//                 }
-//                 else mainMenu();
-//             })             
-//         }
-//     });
-// }
 
 const updateEmployeeRole = async ()=>{
     const emp = {}
@@ -153,6 +145,8 @@ const updateEmployeeRole = async ()=>{
         mainMenu()
     })
 }
+
+
 
 
 const mainMenu = async ()=>{
